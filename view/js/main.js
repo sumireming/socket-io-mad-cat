@@ -48,10 +48,10 @@ var socket = (function() {
 
         // console.log(room)
         addClass(waitingDialogElem, 'hide');
+        addClass(maskElem, 'hide');
 
         ROOM_INFO = room;
 
-        addClass(maskElem, 'hide');
         displayClientInfo(room.members, runTurn);
         randomGridArr = room.randomGridArr;
 
@@ -132,6 +132,11 @@ var socket = (function() {
 
         toggleTurn();
         
+    });
+
+    socket.on('restart', function() {
+        removeClass(waitingDialogElem, 'hide');
+        removeClass(maskElem, 'hide');
     });
     
 })();

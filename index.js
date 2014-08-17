@@ -63,7 +63,7 @@ var server = http.createServer(function(req, res) {
 
 var io = require('socket.io').listen(server);
 var waitingClients = [];
-var allRooms = [];
+var allRooms = {};
 var allSocket = {};
 
 io.on('connection', function(socket) {
@@ -93,7 +93,7 @@ io.on('connection', function(socket) {
             allSocket[waitingClients[0].socketId].emit('startGame', room);
             allSocket[waitingClients[1].socketId].emit('startGame', room);
 
-            allRooms.push(room);
+            allRooms[waitingClients[0].socketId] = allRooms[waitingClients[1].socketId] = room;
             waitingClients = [];
         }
     });
@@ -110,7 +110,19 @@ io.on('connection', function(socket) {
 
         if(waitingClients[0].socketId === socket.id) {
             waitingClients = [];
+        }else{
+            if(allClients[socket.id]) {
+                var rmRoom = allClients[socket.id];
+                var OppClientId = rmRoom.getOpponent(socket.id);
+                delete allClients[socket.id];
+                delete allClients[OppClientId];
+
+                allSocket[OppClientId].emit('restart');
+                // waitingClients.push()
+            }
         }
+
+
 
     });
 
@@ -129,13 +141,12 @@ function initRandomGrid(rows, columns, randomNum) {
 
 function Room(client1, client2) {
     this.roomId = client1.socketId + client2.socketId;
-    console.log(client1)
+
     this.members = {
         cat : client1,
         people : client2
     };
     this.randomGridArr = [];
-
     this.initRandomGrid();
 }
 
@@ -152,4 +163,8 @@ Room.prototype.initRandomGrid = function() {
 
     this.randomGridArr = randomArr;
     return randomArr;
+};
+
+Room.prototype.getOpponent = function(clientId) {
+    return this.roomId.replace(clientId, '');
 };
