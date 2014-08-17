@@ -62,17 +62,13 @@ var server = http.createServer(function(req, res) {
 
 
 var io = require('socket.io').listen(server);
-var waitingClient = [];
+var waitingClients = [];
 var allRooms = [];
 var allSocket = {};
-// var allClientInfo = {};
 
 io.on('connection', function(socket) {
-	console.log('connection ' + socket.id + ' successful!');
+	// console.log('connection ' + socket.id + ' successful!');
 
-    
-
-    // 构造客户端对象
     var client = {
         socketId:socket.id,
         name:false
@@ -86,24 +82,19 @@ io.on('connection', function(socket) {
 
     socket.on('createClient', function(clientInfo) {
         allSocket[socket.id] = socket;
-        // allClientInfo[socket.id] = clientInfo;
 
-        waitingClient.push(clientInfo);
+        waitingClients.push(clientInfo);
 
-        console.log(waitingClient)
-
-        // console.log(clientInfo.name)
+        // console.log(waitingClients)
         
-        if(waitingClient.length === 2){
-            var room = new Room(waitingClient[0], waitingClient[1]);
+        if(waitingClients.length === 2){
+            var room = new Room(waitingClients[0], waitingClients[1]);
 
-            // allClientInfo[waitingClient[0].socketId].room = allClientInfo[waitingClient[1].socketId].room = room;
-
-            allSocket[waitingClient[0].socketId].emit('startGame', room);
-            allSocket[waitingClient[1].socketId].emit('startGame', room);
+            allSocket[waitingClients[0].socketId].emit('startGame', room);
+            allSocket[waitingClients[1].socketId].emit('startGame', room);
 
             allRooms.push(room);
-            waitingClient = [];
+            waitingClients = [];
         }
     });
 
@@ -111,13 +102,16 @@ io.on('connection', function(socket) {
         var room = data.room;
         var turn = data.turn === 'cat' ? 'people' : 'cat';
         allSocket[room.members[turn].socketId].emit('run', data);
-        // socket.broadcast.emit('run', data);
     });
 
     socket.on('disconnect', function() {
+        console.log('disconnect : ');
         console.log(socket.id)
 
-        // var room = allClientInfo[socket.id].room;
+        if(waitingClients[0].socketId === socket.id) {
+            waitingClients = [];
+        }
+
     });
 
 	
