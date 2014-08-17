@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Catch Cat</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="shortcut icon" href="favicon.ico" >
+</head>
+<body>
+	<div class="warpper">
+		<div class="title">Mad Cat Online</div>
+		<div id="header"></div>
+		<div id="grid"></div>
+	</div>
+	
+	<div id="dialog">
+		<div class="dialog-header">
+			Mad cat
+		</div>
+		<div class="dialog-content">
+			<p>Please type your name : </p>
+			<input type="text" id="clientName"/>
+		</div>
+		<div class="dialog-footer">
+			<button id="nameSubmit">OK</button>
+		</div>
+	</div>
+	<div id="mask"></div>
+	<script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="js/util.js"></script>
+	<script type="text/javascript" src="js/main.js"></script>
+</body>
+</html>

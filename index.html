@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>cat</title>
+	<style>
+		/*common style*/
+		.clear{
+			clear: left;
+		}
+		.hide{
+			display: none;
+		}
+
+		/*app style*/
+		.item{
+			float: left;
+			color: #666666;
+			width: 50px;
+			height: 50px;
+			border: 1px solid;
+			border-radius: 25px;
+			margin: 0 2px;
+			background-color: #b5b5b5;
+		}
+		.item.select-circle{
+			background-color: #ff845e;
+		}
+		.item.select-cat{
+			background-color: #ff845e;
+		}
+		.odd{
+			-ms-transform: translate(26px, 0);
+			-webkit-transform: translate(26px, 0);
+			transform: translate(26px, 0);
+		}
+		#grid{
+			background-color: #676767;
+			padding: 50px 0;
+		}
+
+	</style>
+</head>
+<body>
+	<section id="container">
+		<div id="grid"></div>
+	</section>
+	<section id="chat">
+		<label for="">message</label>
+		<input id="message_field" type="text" />
+		<div id="content"></div>
+	</section>
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+
+		var socket = (function() {
+			var socket = io.connect('http://localhost');
+
+			socket.on('connected', function(msg) {
+				console.log('connect to socket io channel');
+				console.log(msg.hello);
+				socket.emit('message', {'message': 'nice to meet you!'});
+			});
+
+			// socket.on('disconnect', function() {
+			// 	console.log('disconnect to channel.');
+			// 	socket.emit('');
+			// }
+		})();
+
+		// (function() {
+
+		// 	var container = document.getElementById('grid');
+		// 	var grid = document.getElementById('grid');
+
+		// 	var drawGrid = function(line, row) {
+		// 		var line = line || 9; 
+		// 		var row = row || 9;
+		// 		var arr = [];
+		// 		for (var i = 1, flag = "even"; i < line+1; i ++) {
+		// 			if (i % 2 === 0) flag = 'odd';
+		// 			for (var j = 1; j < row+1; j++) {
+		// 				arr.push('<div class="item ' + flag + ' row-' + i + ' line-' + j + '"></div>');
+		// 			}
+		// 			arr.push('<div class="clear"></div>');
+		// 			flag = "even";
+		// 		}
+		// 		return arr.join("");
+		// 	}
+		// 	grid.addEventListener('click', function(event) {
+		// 		var target = event.target;
+		// 		if (target.className.indexOf('item') >= 0) target.className = target.className + ' select-circle';
+		// 	});
+		// 	grid.innerHTML = drawGrid();
+		// }())
+	</script>
+</body>
+</html>

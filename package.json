@@ -1,0 +1,15 @@
+{
+  "name": "Mad Cat Online",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Desperadom",
+  "license": "",
+  "dependencies": {
+    "socket.io": "~1.0.6",
+    "supervisor" : "~0.6.0"
+  }
+}
