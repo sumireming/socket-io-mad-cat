@@ -44,6 +44,8 @@ var socket = (function() {
 
     socket.on('startGame', function(room) {
 
+        console.log(room)
+
         ROOM_INFO = room;
 
         addClass(maskElem, 'hide');

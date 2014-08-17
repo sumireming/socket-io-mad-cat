@@ -65,7 +65,7 @@ var io = require('socket.io').listen(server);
 var waitingClient = [];
 var allRooms = [];
 var allSocket = {};
-var allClientInfo = {};
+// var allClientInfo = {};
 
 io.on('connection', function(socket) {
 	console.log('connection ' + socket.id + ' successful!');
@@ -86,16 +86,19 @@ io.on('connection', function(socket) {
 
     socket.on('createClient', function(clientInfo) {
         allSocket[socket.id] = socket;
-        allClientInfo[socket.id] = clientInfo;
+        // allClientInfo[socket.id] = clientInfo;
 
         waitingClient.push(clientInfo);
 
-        console.log(clientInfo.name)
+        console.log(waitingClient)
+
+        // console.log(clientInfo.name)
         
         if(waitingClient.length === 2){
             var room = new Room(waitingClient[0], waitingClient[1]);
 
-            allClientInfo[waitingClient[0].socketId].room = allClientInfo[waitingClient[1].socketId].room = room;
+            // allClientInfo[waitingClient[0].socketId].room = allClientInfo[waitingClient[1].socketId].room = room;
+
             allSocket[waitingClient[0].socketId].emit('startGame', room);
             allSocket[waitingClient[1].socketId].emit('startGame', room);
 
@@ -107,7 +110,6 @@ io.on('connection', function(socket) {
     socket.on('run', function(data) {
         var room = data.room;
         var turn = data.turn === 'cat' ? 'people' : 'cat';
-        console.log(room.members[turn].socketId)
         allSocket[room.members[turn].socketId].emit('run', data);
         // socket.broadcast.emit('run', data);
     });
@@ -133,6 +135,7 @@ function initRandomGrid(rows, columns, randomNum) {
 
 function Room(client1, client2) {
     this.roomId = client1.socketId + client2.socketId;
+    console.log(client1)
     this.members = {
         cat : client1,
         people : client2
