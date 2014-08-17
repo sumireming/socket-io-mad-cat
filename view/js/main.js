@@ -14,7 +14,8 @@ var gridWrapper = document.getElementById("grid"),
     headerElem = document.getElementById("header"),
     catInfoElem = null,
     peopleInfoElem = null,
-    dialogElem = document.getElementById("dialog"),
+    startDialogElem = document.getElementById("start"),
+    waitingDialogElem = document.getElementById("waiting"),
     maskElem = document.getElementById("mask");
 
 
@@ -37,21 +38,21 @@ var socket = (function() {
             if(nameEle.value !== "" ){
                 CLIENT_INFO.name = nameEle.value;
                 socket.emit('createClient', CLIENT_INFO);
-                addClass(dialogElem, "hide");
+                addClass(startDialogElem, 'hide');
+                removeClass(waitingDialogElem, 'hide');
             }
         });
     });
 
     socket.on('startGame', function(room) {
 
-        console.log(room)
+        // console.log(room)
+        addClass(waitingDialogElem, 'hide');
 
         ROOM_INFO = room;
 
         addClass(maskElem, 'hide');
-
         displayClientInfo(room.members, runTurn);
-
         randomGridArr = room.randomGridArr;
 
         catStandingElem = initGrid(GRID_ROWS, GRID_COLUMNS, randomGridArr);
@@ -60,15 +61,26 @@ var socket = (function() {
         }
 
 
-
         gridWrapper.addEventListener('click', function(event) {
             var target = event.target;
             if(hasClass(target, 'item') && !hasClass(gridWrapper, 'forbid')) {
+                var sendObj = {
+                    room : ROOM_INFO,
+                    runElem : target.id,
+                    turn : runTurn
+                }
+
                 //人走
                 if(!hasClass(target, 'hascat') && !hasClass(target, 'selected') && runTurn === 'people') {
-
                     addClass(target, 'selected');
                     catRunableElems = getCatRunableSteps(catStandingElem, GRID_ROWS, GRID_COLUMNS);
+
+                    if(catRunableElems.length === 0){
+                        alert('Catcher win!!!')
+                    }
+
+                    socket.emit("run", sendObj);
+                    toggleTurn();
                 }
 
                 //猫走
@@ -77,16 +89,16 @@ var socket = (function() {
                     clearRunableSteps(catRunableElems);
                     catStandingElem = target;
                     addClass(target, 'hascat');
+
+                    if(isCatWin(catStandingElem)) {
+                        alert('cat win!!!')
+                    }
+
+                    socket.emit("run", sendObj);
+                    toggleTurn();
                 }
 
-                var sendObj = {
-                    room : ROOM_INFO,
-                    runElem : target.id,
-                    turn : runTurn
-                }
-
-                socket.emit("run", sendObj);
-                toggleTurn();
+                
                 
             }
 
@@ -95,13 +107,16 @@ var socket = (function() {
 
     socket.on('run', function(data) {
 
-        console.log(data)
-
         var elem = document.getElementById(data.runElem);
 
         if(data.turn === 'people') {
             addClass(elem, 'selected');
             catRunableElems = getCatRunableSteps(catStandingElem, GRID_ROWS, GRID_COLUMNS);
+            
+            if(catRunableElems.length === 0){
+                alert('Catcher win!!!')
+            }
+
         }
 
         if(data.turn === 'cat') {
@@ -109,6 +124,10 @@ var socket = (function() {
             clearRunableSteps(catRunableElems);
             catStandingElem = elem;
             addClass(elem, 'hascat');
+
+            if(isCatWin(catStandingElem)) {
+                alert('cat win!!!')
+            }
         }
 
         toggleTurn();
@@ -168,9 +187,6 @@ function initGrid(rows, columns, randomGridArr) {
 function toggleTurn() {
     runTurn = runTurn === 'people' ? 'cat' : 'people';
 
-    console.log(catInfoElem)
-    console.log(peopleInfoElem)
-
     if(runTurn === 'people') {
         removeClass(catInfoElem, 'turn');
         addClass(peopleInfoElem, 'turn');
@@ -222,3 +238,15 @@ function getCatRunableSteps(catStandingElem, rows, columns) {
     return stepArr;
 }
 
+function isCatWin(catStandingElem){
+    var flag = false;
+    var coords = catStandingElem.id.match(/\d/g);
+    var catCoordX = parseInt(coords[0], 10);
+    var catCoordY = parseInt(coords[1], 10);
+
+    if(catCoordX === 0 || catCoordX === GRID_ROWS-1 || catCoordY === 0 || catCoordY === GRID_COLUMNS-1) {
+        flag = true;
+    }
+
+    return flag;
+}

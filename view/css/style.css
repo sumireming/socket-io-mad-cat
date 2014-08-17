@@ -98,7 +98,7 @@ body{
     opacity: 0.5;
 }
 
-#dialog{
+.dialog {
     position: absolute;
     width: 450px;
     height: 200px;
@@ -111,6 +111,24 @@ body{
     z-index: 1040;
     border-radius: 6px;
 }
+
+.dialog.start {
+    height: 200px;
+}
+
+.dialog.waiting {
+    height: 130px;
+}
+
+.waiting-message{
+    background-image: url(../image/waiting.gif);
+    background-repeat: no-repeat;
+    text-indent: 40px;
+    height: 50px;
+    line-height: 36px;
+    margin-top: 20px;
+}
+
 
 .dialog-header, .dialog-content, .dialog-footer{
     padding:5px 20px;
