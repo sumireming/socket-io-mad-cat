@@ -67,7 +67,8 @@ var allRooms = {};
 var allSocket = {};
 
 io.on('connection', function(socket) {
-	// console.log('connection ' + socket.id + ' successful!');
+
+	console.log('connection ' + socket.id + ' successful!');
 
     var client = {
         socketId:socket.id,
@@ -108,18 +109,16 @@ io.on('connection', function(socket) {
         console.log('disconnect : ');
         console.log(socket.id)
 
-        if(waitingClients[0].socketId === socket.id) {
+        if(waitingClients[0] && waitingClients[0].socketId === socket.id) {
             waitingClients = [];
-        }else{
-            if(allClients[socket.id]) {
-                var rmRoom = allClients[socket.id];
-                var OppClientId = rmRoom.getOpponent(socket.id);
-                delete allClients[socket.id];
-                delete allClients[OppClientId];
+        }else if(allSocket[socket.id]) {
+            var rmRoom = allSocket[socket.id];
+            var OppClientId = rmRoom.getOpponent(socket.id);
+            delete allSocket[socket.id];
+            delete allSocket[OppClientId];
 
-                allSocket[OppClientId].emit('restart');
-                // waitingClients.push()
-            }
+            allSocket[OppClientId].emit('restart');
+            // waitingClients.push()
         }
 
 

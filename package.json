@@ -11,5 +11,9 @@
   "dependencies": {
     "socket.io": "~1.0.6",
     "supervisor" : "~0.6.0"
+  },
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/sumireming/socket-io-mad-cat.git"
   }
 }
