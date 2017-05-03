@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
 	<title>cat</title>
 	<style>
 		/*common style*/
@@ -55,7 +56,7 @@
 	<script>
 
 		var socket = (function() {
-			var socket = io.connect('http://localhost');
+			var socket = io.connect('http://172.16.68.249');
 
 			socket.on('connected', function(msg) {
 				console.log('connect to socket io channel');
